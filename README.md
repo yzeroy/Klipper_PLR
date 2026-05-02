@@ -25,7 +25,7 @@ To install KlipperPowerLostRecovery for Klipper, follow these simple steps below
     ```
 
 <p align="center">
-  <img src="Pictures/Slicer.png" width="600" title="Slicer Screenshot">
+  <img src="Pictures/Slicer.png" width="800" title="Slicer Screenshot">
 </p>
 
 * end-gcode add in your slicer:
