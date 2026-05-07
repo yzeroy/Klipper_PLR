@@ -72,13 +72,17 @@ if [ -f "$PRINTER_DATA_DIR/power_loss_recovery.cfg" ]; then
     sed -i -E "s|\{PLR_DIR\}|$USER_HOME/printer_data/plr|i" "$PRINTER_DATA_DIR/power_loss_recovery.cfg"
 fi
 
-# 5. Modify printer.cfg (Add include)
+# 5. Modify printer.cfg (Add include to the FIRST line)
 if [ ! -f "$PRINTER_DATA_DIR/printer.cfg" ]; then
     touch "$PRINTER_DATA_DIR/printer.cfg"
 fi
+
 if ! grep -Fxq '[include power_loss_recovery.cfg]' "$PRINTER_DATA_DIR/printer.cfg"; then
-    echo -e "\n[include power_loss_recovery.cfg]" >> "$PRINTER_DATA_DIR/printer.cfg"
-    echo "Include added to printer.cfg."
+    # Použití sed k vložení na první řádek (1i)
+    sed -i '1i [include power_loss_recovery.cfg]' "$PRINTER_DATA_DIR/printer.cfg"
+    echo "Include added to the first line of printer.cfg."
+else
+    echo "Include already exists in printer.cfg."
 fi
 
 # 6. Modify moonraker.conf (Add update_manager entry directly)
@@ -106,7 +110,10 @@ fi
 chown "$OWNER":"$OWNER" "$PRINTER_DATA_DIR/power_loss_recovery.cfg"
 chown "$OWNER":"$OWNER" "$PRINTER_DATA_DIR/variables.cfg"
 chown "$OWNER":"$OWNER" "$PRINTER_DATA_DIR/moonraker.conf"
-chown "$OWNER":"$OWNER" "$EXTRAS_DIR/power_loss_recovery.py"
+# Fix ownership for extras only if it exists
+if [ -f "$EXTRAS_DIR/power_loss_recovery.py" ]; then
+    chown "$OWNER":"$OWNER" "$EXTRAS_DIR/power_loss_recovery.py"
+fi
 echo "Ownership fixed for configuration files."
 
 # 8. Start Klipper service
